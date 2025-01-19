@@ -1,10 +1,10 @@
-cmake_minimum_required(VERSION 3.28)
-project(main)
+cmake_minimum_required(VERSION 3.10)
+project(FFTExample)
 
 set(CMAKE_CXX_STANDARD 14)
 
-find_package(Eigen3 CONFIG REQUIRED)
+find_package(Eigen3 REQUIRED)
 
-add_executable(${PROJECT_NAME} main.cpp)
+add_executable(fft_example main.cpp fft.cpp)
 
-target_link_libraries(${PROJECT_NAME} PRIVATE Eigen3::Eigen)
+target_link_libraries(fft_example PRIVATE Eigen3::Eigen)

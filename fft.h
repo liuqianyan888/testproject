@@ -1,15 +1,31 @@
-//
-// Created by 86155 on 2025/1/18.
-//
-
-#ifndef FFT_H
-#define FFT_H
+// fft.h
+#ifndef FFTLIBRARY_H
+#define FFTLIBRARY_H
 
 #include <Eigen/Dense>
+#include <unsupported/Eigen/FFT>
+#include <iostream>
 
 namespace FFTLibrary {
-    // 函数声明：计算X的傅里叶变换
-    Eigen::VectorXd fft(const Eigen::VectorXd& X);  // X 是输入，Y 是输出，大小相同
+
+// 函数声明：计算矩阵X的离散傅里叶变换
+    Eigen::MatrixXcd fft_full(const Eigen::MatrixXd &X);
+
+} // namespace FFTLibrary
+
+
+namespace FFTLibrary_v2 {
+
+    // 计算n点傅里叶变换，支持向量和矩阵
+    Eigen::MatrixXcd fft(const Eigen::MatrixXd& X, int n);  // 保持为 fft
+
+
+}
+namespace FFTLibrary_v3 {
+
+    // 沿指定维度进行傅里叶变换
+    Eigen::MatrixXcd fft_along_dim(const Eigen::MatrixXd& X, int n, int dim);
 }
 
-#endif // FFT_H
+#endif // FFTLIBRARY_H
+
