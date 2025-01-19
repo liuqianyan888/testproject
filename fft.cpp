@@ -24,64 +24,64 @@ namespace FFTLibrary {
 } // namespace FFTLibrary
 
 namespace FFTLibrary_v2 {
-    // 新增的fft(X, n)实现
-    Eigen::MatrixXcd fft(const Eigen::MatrixXd &X, int n) {
-        Eigen::MatrixXcd result;  // 最终的傅里叶变换结果
-        Eigen::FFT<double> fft;   // 使用Eigen的FFT
 
-        // 如果输入是矩阵，按列进行傅里叶变换
+    // 计算 n 点离散傅里叶变换（DFT）
+    Eigen::MatrixXcd fft(const Eigen::MatrixXd& X, int n) {
+        // 创建结果矩阵，确保结果的行数为 n
+        Eigen::MatrixXcd result(n, X.cols());
+        Eigen::FFT<double> fft;  // 使用 Eigen 库的 FFT
+
+        // 如果 X 是矩阵，每列独立进行傅里叶变换
         if (X.rows() > 1) {
-            // 创建一个与输入矩阵X相同的矩阵
-            result = Eigen::MatrixXcd(X.rows(), X.cols());
-
             for (int col = 0; col < X.cols(); ++col) {
                 Eigen::VectorXd column = X.col(col);
 
-                // 处理每一列：根据要求补零或截断
+                // 如果列的长度小于 n，补零；如果大于 n，截断
                 if (column.size() < n) {
                     column.conservativeResize(n);
-                    column.tail(n - column.size()).setZero();  // 用零填充
+                    column.tail(n - column.size()).setZero();  // 填充零
                 } else if (column.size() > n) {
                     column.conservativeResize(n);  // 截断
                 }
 
-                // 对列进行傅里叶变换
-                Eigen::VectorXcd fft_result;
+                // 进行傅里叶变换
+                Eigen::VectorXcd fft_result(n);  // 确保结果向量大小为 n
                 fft.fwd(fft_result, column);
-                result.col(col) = fft_result;
+                result.col(col) = fft_result;  // 将傅里叶变换结果赋值给 result
             }
-
-        } else {  // 如果输入是单行向量
+        }
+            // 如果 X 是向量（单行或单列）
+        else {
             Eigen::VectorXd row = X.row(0);
 
-            // 处理单行向量
+            // 如果行的长度小于 n，补零；如果大于 n，截断
             if (row.size() < n) {
                 row.conservativeResize(n);
-                row.tail(n - row.size()).setZero();  // 用零填充
+                row.tail(n - row.size()).setZero();  // 填充零
             } else if (row.size() > n) {
                 row.conservativeResize(n);  // 截断
             }
 
-            // 对行进行傅里叶变换
-            Eigen::VectorXcd fft_result;
+            // 进行傅里叶变换
+            Eigen::VectorXcd fft_result(n);  // 确保结果向量大小为 n
             fft.fwd(fft_result, row);
-            result = fft_result.transpose();
+            result = fft_result.transpose();  // 转置结果以匹配矩阵格式
         }
 
         return result;
     }
 
-}
+}  // namespace FFTLibrary_v2
 
 namespace FFTLibrary_v3 {
 
-// 新增的fft_along_dim(X, n, dim)实现
+    // 新增的fft_along_dim(X, n, dim)实现
     Eigen::MatrixXcd fft_along_dim(const Eigen::MatrixXd& X, int n, int dim) {
         Eigen::MatrixXcd result;  // 最终的傅里叶变换结果
         Eigen::FFT<double> fft;   // 使用Eigen的FFT
 
         if (dim == 1) {  // 按列进行傅里叶变换
-            result = Eigen::MatrixXcd(X.rows(), X.cols()); // 创建与输入矩阵相同的矩阵
+            result = Eigen::MatrixXcd(n, X.cols()); // 创建结果矩阵，确保行数为 n
 
             for (int col = 0; col < X.cols(); ++col) {
                 Eigen::VectorXd column = X.col(col);
@@ -95,16 +95,16 @@ namespace FFTLibrary_v3 {
                 }
 
                 // 对列进行傅里叶变换
-                Eigen::VectorXcd fft_result;
+                Eigen::VectorXcd fft_result(n);  // 确保结果的大小为 n
                 fft.fwd(fft_result, column);
-                result.col(col) = fft_result;
+                result.col(col) = fft_result;  // 存储傅里叶变换结果
             }
 
         } else if (dim == 2) {  // 按行进行傅里叶变换
-            result = Eigen::MatrixXcd(X.rows(), X.cols()); // 创建与输入矩阵相同的矩阵
+            result = Eigen::MatrixXcd(X.rows(), n); // 创建结果矩阵，确保行数为 X.rows()，列数为 n
 
             for (int row = 0; row < X.rows(); ++row) {
-                Eigen::VectorXd row_vector = X.row(row);
+                Eigen::VectorXd row_vector = X.row(row).transpose();  // 获取每一行并转置为列向量
 
                 // 处理每一行：根据要求补零或截断
                 if (row_vector.size() < n) {
@@ -115,9 +115,9 @@ namespace FFTLibrary_v3 {
                 }
 
                 // 对行进行傅里叶变换
-                Eigen::VectorXcd fft_result;
+                Eigen::VectorXcd fft_result(n);  // 确保结果的大小为 n
                 fft.fwd(fft_result, row_vector);
-                result.row(row) = fft_result.transpose();
+                result.row(row) = fft_result.transpose();  // 存储傅里叶变换结果
             }
         } else {
             std::cerr << "Invalid dimension. Please specify either dim=1 (columns) or dim=2 (rows).\n";

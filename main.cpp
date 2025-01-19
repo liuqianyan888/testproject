@@ -10,18 +10,17 @@ int main() {
             5.0, 6.0,
             7.0, 8.0;
 
+
     int n = 8;
 
     std::cout << "Input Matrix X:\n" << X << "\n\n";
 
     // 计算X的FFT
     Eigen::MatrixXcd Y = FFTLibrary::fft_full(X);
+    std::cout << "FFT Output Y:\n" << Y << std::endl;
 
     // 调用fft函数计算结果
     Eigen::MatrixXcd Y_2 = FFTLibrary_v2::fft(X, n);
-
-    std::cout << "FFT Output Y:\n" << Y << std::endl;
-
     std::cout << "FFT Output Y_2:" << std::endl;
     std::cout << Y_2 << std::endl;
 
